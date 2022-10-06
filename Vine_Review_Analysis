@@ -1,0 +1,65 @@
+--Deliverable 2
+--#1
+create table public.filtered_vine_table
+as select *
+from public.vine_table 
+where total_votes >= 20
+
+select * from public.filtered_vine_table limit 100
+ 
+ --#2
+create table public.filtered_vine_table_wvotes
+as select *
+from public.filtered_vine_table
+WHERE CAST(helpful_votes AS FLOAT)/CAST(total_votes AS FLOAT) >=0.5
+
+select * from filtered_vine_table_wvotes limit 100
+
+--#3
+create table filtered_vine_table_wvotes_paid
+as select *
+from public.filtered_vine_table_wvotes
+where vine = 'Y'
+
+select * from filtered_vine_table_wvotes_paid limit 100
+
+--#4
+create table filtered_vine_table_wvotes_unpaid
+as select *
+from public.filtered_vine_table_wvotes
+where vine = 'N'
+
+select * from filtered_vine_table_wvotes_unpaid limit 100
+
+--#5
+select
+count(review_id) review_counts,
+sum(case
+	when star_rating = 5 then 1
+end) as "5_star_counts",
+sum(case
+	when star_rating = 5 then 1
+end)/cast(count(review_id) as float) as pertote
+from filtered_vine_table_wvotes_paid
+
+--review counts = 94
+--5 star counts = 48
+--percent to total = 51.063%
+
+select
+count(review_id) review_counts,
+sum(case
+	when star_rating = 5 then 1
+end) as "5_star_counts",
+sum(case
+	when star_rating = 5 then 1
+end)/cast(count(review_id) as float) as pertote
+from filtered_vine_table_wvotes_unpaid
+
+--review counts = 40471
+--5 star counts = 15663
+--percent to total = 38.701%
+
+
+
+
